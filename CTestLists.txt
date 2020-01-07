@@ -1,0 +1,23 @@
+#
+#   SharedCache CTest script
+#
+#   Copyright Olivier Le Doeuff 2019
+#
+enable_testing()
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+set_target_properties(gtest gtest_main gmock gmock_main
+    PROPERTIES FOLDER Dependencies/gtest)
+
+set(SHAREDCACHE_TESTS ${SHAREDCACHE_TARGET}_Tests)
+add_executable(${SHAREDCACHE_TESTS} "${CMAKE_CURRENT_SOURCE_DIR}/tests/Main.cpp")
+target_link_libraries(${SHAREDCACHE_TESTS} ${SHAREDCACHE_TARGET} gtest)
+
+if(SHAREDCACHE_FOLDER_PREFIX)
+    set_target_properties(${SHAREDCACHE_TESTS} PROPERTIES FOLDER ${SHAREDCACHE_FOLDER_PREFIX}/Tests)
+endif()
+
+message(STATUS "Add Test: ${SHAREDCACHE_TESTS}")
+add_test(NAME ${SHAREDCACHE_TESTS} COMMAND ${SHAREDCACHE_TESTS})
