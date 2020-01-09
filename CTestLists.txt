@@ -13,10 +13,16 @@ set_target_properties(gtest gtest_main gmock gmock_main
 
 set(SHAREDCACHE_TESTS ${SHAREDCACHE_TARGET}_Tests)
 add_executable(${SHAREDCACHE_TESTS} "${CMAKE_CURRENT_SOURCE_DIR}/tests/Main.cpp")
+add_executable(${SHAREDCACHE_TARGET}_CircularBenchmark "${CMAKE_CURRENT_SOURCE_DIR}/tests/CircularBenchmark.cpp")
+add_executable(${SHAREDCACHE_TARGET}_ListBenchmark "${CMAKE_CURRENT_SOURCE_DIR}/tests/ListBenchmark.cpp")
 target_link_libraries(${SHAREDCACHE_TESTS} ${SHAREDCACHE_TARGET} gtest)
+target_link_libraries(${SHAREDCACHE_TARGET}_CircularBenchmark ${SHAREDCACHE_TARGET})
+target_link_libraries(${SHAREDCACHE_TARGET}_ListBenchmark ${SHAREDCACHE_TARGET})
 
 if(SHAREDCACHE_FOLDER_PREFIX)
     set_target_properties(${SHAREDCACHE_TESTS} PROPERTIES FOLDER ${SHAREDCACHE_FOLDER_PREFIX}/Tests)
+    set_target_properties(${SHAREDCACHE_TARGET}_CircularBenchmark PROPERTIES FOLDER ${SHAREDCACHE_FOLDER_PREFIX}/Tests)
+    set_target_properties(${SHAREDCACHE_TARGET}_ListBenchmark PROPERTIES FOLDER ${SHAREDCACHE_FOLDER_PREFIX}/Tests)
 endif()
 
 message(STATUS "Add Test: ${SHAREDCACHE_TESTS}")

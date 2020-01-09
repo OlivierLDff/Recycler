@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <chrono>
 
 GTEST_API_ int main(int argc, char **argv)
 {
@@ -25,41 +24,6 @@ public:
 };
 
 typedef std::shared_ptr<Foo<>> SharedFoo;
-
-template <size_t SIZE>
-void benchmarkCircular()
-{
-    CircularCache<Foo<SIZE>, 256> cache;
-    const size_t MAX_SIZE = cache.MAX_SIZE;
-    std::shared_ptr<Foo<SIZE>> dummy[MAX_SIZE];
-
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    for (int j = 0; j < 1000; ++j)
-    {
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = cache.make();
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = nullptr;
-    }
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-    std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
-    for (int j = 0; j < 1000; ++j)
-    {
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = std::make_shared<Foo<SIZE>>();
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = nullptr;
-    }
-    std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-
-    const auto ms1 = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-    const auto ms2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - begin2).count();
-
-    std::cout << "CircularCache Perf<" << SIZE << ">   \t" << ms1 << " [ms]" << std::endl;
-    std::cout << "make_shared Perf  <" << SIZE << ">   \t" << ms2 << " [ms]" << std::endl;
-    std::cout << "Cache is " << (float(ms2) / float(ms1)) << " times faster" << std::endl;
-}
 
 TEST(CircularCacheTests, basic)
 {
@@ -100,6 +64,17 @@ TEST(CircularCacheTests, basic)
     ASSERT_EQ(cache.size(), 5);
 }
 
+TEST(CircularCacheTests, resetCall)
+{
+    CircularCache<Foo<1>, 5> cache;
+    auto foo = cache.make();
+    foo->dummyData[0] = 6;
+    foo = nullptr;
+
+    foo = cache.make();
+    ASSERT_EQ(foo->dummyData[0], 0);
+}
+
 TEST(CircularCacheTests, example)
 {
     // 1) Declare the cache
@@ -137,63 +112,6 @@ TEST(CircularCacheTests, example)
     const auto foo5 = cache.make();
     ASSERT_EQ(cache.size(), 2);
     ASSERT_EQ(foo2.use_count(), 1);
-}
-
-TEST(CircularCacheTests, benchmark)
-{
-    benchmarkCircular<32>();
-    benchmarkCircular<64>();
-    benchmarkCircular<256>();
-    benchmarkCircular<1024>();
-    benchmarkCircular<8192>();
-    benchmarkCircular<65536>();
-}
-
-template <size_t SIZE>
-void benchmarkList()
-{
-    ListCache<Foo<SIZE>, 256> cache;
-    const size_t MAX_SIZE = cache.MAX_SIZE;
-    std::shared_ptr<Foo<SIZE>> dummy[MAX_SIZE];
-
-    const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    for (int j = 0; j < 1000; ++j)
-    {
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = cache.make();
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = nullptr;
-        cache.release();
-    }
-    const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-    const std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
-    for (int j = 0; j < 1000; ++j)
-    {
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = std::make_shared<Foo<SIZE>>();
-        for (size_t i = 0; i < MAX_SIZE; ++i)
-            dummy[i] = nullptr;
-    }
-    const std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-
-    const auto ms1 = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-    const auto ms2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - begin2).count();
-
-    std::cout << "ListCache Perf    <" << SIZE << ">   \t" << ms1 << " [ms]" << std::endl;
-    std::cout << "make_shared Perf  <" << SIZE << ">   \t" << ms2 << " [ms]" << std::endl;
-    std::cout << "Cache is " << (float(ms2)/float(ms1)) << " times faster" << std::endl;
-}
-
-TEST(ListCacheTests, benchmark)
-{
-    benchmarkList<32>();
-    benchmarkList<64>();
-    benchmarkList<256>();
-    benchmarkList<1024>();
-    benchmarkList<8192>();
-    benchmarkList<65536>();
-    // With big size buffer, the reset function is quite expensive
 }
 
 TEST(ListCacheTests, basic)
@@ -336,5 +254,5 @@ TEST(ListCacheTests, example)
     // 9.5) A new value is created but not stored inside the cache
     // because MAX_SIZE is reached (cache.size() == 4)
     const auto foo10 = cache.make();
-    ASSERT_EQ(cache.size(), 4);    
+    ASSERT_EQ(cache.size(), 4);
 }

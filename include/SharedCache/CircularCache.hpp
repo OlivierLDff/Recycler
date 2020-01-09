@@ -65,6 +65,7 @@ public:
             if (object.use_count() == 1)
             {
                 Base::_it = Base::_cache.begin();
+                object->reset(std::forward<Types>(args)...);
                 return object;
             }
         }
