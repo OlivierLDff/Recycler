@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include <cstring>
 
 #include <SharedCache/CircularCache.hpp>
 
