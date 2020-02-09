@@ -1,5 +1,5 @@
 #
-#   SharedCache install script
+#   Recycler install script
 #
 #   Copyright Olivier Le Doeuff 2019
 #
@@ -45,7 +45,7 @@ configure_package_config_file(
 #   * header location after install: <prefix>/include/foo/Bar.hpp
 #   * headers can be included by C++ code `#include <foo/Bar.hpp>`
 install(
-    TARGETS ${SHAREDCACHE_TARGET}
+    TARGETS ${RECYCLER_TARGET}
     EXPORT "${targets_export_name}"
     LIBRARY DESTINATION "lib"
     ARCHIVE DESTINATION "lib"
@@ -56,16 +56,16 @@ install(
 #install(TARGETS libsodium DESTINATION ".")
 
 add_custom_command(
-        TARGET ${SHAREDCACHE_TARGET} POST_BUILD
+        TARGET ${RECYCLER_TARGET} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/include/SharedCache.hpp
-                ${CMAKE_CURRENT_BINARY_DIR}/include/${SHAREDCACHE_INSTALL_PREFIX}/SharedCache.hpp)
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/include/Recycler.hpp
+                ${CMAKE_CURRENT_BINARY_DIR}/include/${RECYCLER_INSTALL_PREFIX}/Recycler.hpp)
 
 # Headers:
 #   * Source/foo/Bar.hpp -> <prefix>/include/foo/Bar.hpp
 #   * Source/foo/Baz.hpp -> <prefix>/include/foo/Baz.hpp
 install(
-    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/${SHAREDCACHE_INSTALL_PREFIX}"
+    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/${RECYCLER_INSTALL_PREFIX}"
     DESTINATION "${include_install_dir}"
     FILES_MATCHING PATTERN "*.h"
 )

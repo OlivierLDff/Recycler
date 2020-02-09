@@ -1,26 +1,34 @@
-# SharedCache
+# Recycler
 
-The library provide 2 containers that contains a list of `shared_ptr`. The goals of those container is to reduce dynamic allocation call by reusing already allocated objects that are no longer in use.
+This C++14 library provide classes that let you recycle allocated memory block. It's really convenient to use in a non blocking producer/consumer design pattern.
 
-* **ListCache**: Allocate objects in a list. When the list if full the objects continued to get allocated but are not stored in the list.
-  * Calling `reset` reset the list counter without deleting any shared object.
-  * Calling `release` will remove from the list all object reference elsewhere.
-  * When iterating in the list to recreate object, the ones that are shared are removed and new objects are allocated.
-* **CircularCache**: Allocate object until the list is full. Then reuse the first objects in the list if they are not used somewhere else. Otherwise reallocate.
+## How to use
 
-Using one type of list or the other really depends on your usage. You should benchmark your use case. Efficiency of List  vs Circular depends on how you keep reference on created objects.
+### Recycler::Circular
 
-* For an object that is a container of other object choose ListCache.
-* For a messaging system that send object use CircularCache.
+The `Recycler::Circular<T>::make(...)` behave like `std::make_shared<T>(...)` except it will recycle previously allocated T if not in use anymore. 
 
-## Examples
+This library leverage the power of `std::shared_ptr` and heavily use the thread safe `use_count()` field. When an object created with `Recycler::Circular` goes out from user scope, it's automatically reused.
 
-### ListCache
+The `Circular` container especially shine when:
 
-In the following example the whole API is demonstrated.
+* Items are expected to be released in the same order they got created.
+* Items are expected to always be released.
+
+If some item are kept by the user, then they will be removed from cache if cache grow more than it's size. It's also possible to explicitly release memory from the cache with `Recycler::Circular<T>::release()`.
+
+Max size of the cache can be set at object declaration, with templated arg `MAX`. Cache can be resized later to better suit needs with `Recycler::Circular<T>::resize(size_t)`.
+
+All memory in cache can be cleared with `Recycler::Circular<T>::clear()`.
+
+> `Recycler::Circular<T, 2>` can be used for a double non blocking buffer.
+
+#### Example
+
+Here a basic example that allocate multiple instance of `Foo` and reuse them. A runnable example can be found in `CircularTests.cpp`
 
 ```cpp
-#include <SharedCache/ListCache.hpp>
+#include <Recycler/Circular.hpp>
 
 class Foo
 {
@@ -31,112 +39,49 @@ public:
 
 int main()
 {
-  // 1) Declare the cache
-  ListCache<Foo, 4> cache;
-
-  // 2) Create one Foo
-  cache.make();
-
-  // 3) Reuse the first foo created. cache.size() == 1
-  const auto foo = cache.make();
-
-  // 4) Create a second foo because
-  auto foo2 = cache.make();
-
-  // 5) Release foo2
-  foo2.reset();
-
-  // 6) The cache will reuse foo2 (cache.size() == 2)
-  foo2 = cache.make();
-
-  // 7) foo & foo2 are reference here and in the cache
-  // release function will remove foo & foo2 from the cache
-  // cache.size() == 0
-  cache.release();
-
-  // 8.1) Reinsert elements in the cache and release foo4
-  const auto foo3 = cache.make();
-  auto foo4 = cache.make();
-  const auto foo5 = cache.make();
-  foo4.reset();
-
-  // 8.2) Reset the cache mean only
-  // reset the internal iterator in the list
-  // So size stay (cache.size() == 3)
-  cache.reset();
-
-  // 9.1) This function will allocate a new foo at the index of foo3
-  // because foo3 is still referenced outside cache
-  const auto foo6 = cache.make();
-
-  // 9.2) Because foo4 have been release, the old value of foo4 will be reused
-  const auto foo7 = cache.make();
-
-  // 9.3) foo5 still reference outside cache, so foo8 is newly allocated
-  // (cache.size() == 3)
-  const auto foo8 = cache.make();
-
-  // 9.4) A new value is created inside the cache (cache.size() == 4)
-  const auto foo9 = cache.make();
-
-  // 9.5) A new value is created but not stored inside the cache
-  // because MAX_SIZE is reached (cache.size() == 4)
-  const auto foo10 = cache.make();
-}
-```
-
-### CircularCache
-
-CircularCache is simpler to use because there is only one function exposed: `make`.
-
-```cpp
-#include <SharedCache/CircularCache.hpp>
-
-class Foo
-{
-public:
-  Foo() = default;
-  void reset() { };
-};
-
-int main()
-{
-  // 1) Declare the cache
-  CircularCache<Foo, 2> cache;
+  // 1) Declare the cache that contain std::shared_ptr<Foo>.
+  // Max element in cache is 2
+  Recycler::Circular<Foo, 2> cache;
 
   // 2) Take a reference, first element is returned
-  cache.make();
+  // This will call the constructor
+  // cache.size()==1
+  (void)cache.make();
 
   // 2) Take a reference. First element wasn't stored
   // outside the cache. First element is returned again
+  // cache.size()==1
   const auto foo1 = cache.make();
 
   // 2) Take a reference. First element wasn't stored
   // outside the cache. First element is returned again
+  // cache.size()==2
   auto foo2 = cache.make();
 
   // 3) Release foo2, this will be the next value returned
   foo2.reset();
 
   // 4) Foo2 take the same value as previously
+  // cache.size()==2
   foo2 = cache.make();
 
   // ) foo1 is removed from the circular buffer because
-  // it is referenced outside of the cache
+  // it is referenced outside of the cache.
+  // foo1 != foo4
+  // cache.size()==2
   const auto foo4 = cache.make();
 
   // ) foo2 is removed from the circular buffer because
   // it is referenced outside of the cache
+  // cache.size()==2
   const auto foo5 = cache.make();
 }
 ```
 
-### Custom Constructor
-
 The object contained can also use a custom constructor/reset function.
 
 ```cpp
-#include <SharedCache/CircularCache.hpp>
+#include <Recycler/Circular.hpp>
 
 class Foo
 {
@@ -159,7 +104,7 @@ private:
 
 int main()
 {
-  CircularCache<Foo<>, 2> cache;
+  Recycler::Circular<Foo<>, 2> cache;
   // Call constructor
   cache.make(4, 9.8);
   // Call reset function
@@ -167,13 +112,45 @@ int main()
 }
 ```
 
+### Buffer
+
+The `Recycler::Buffer` is fully ready to be used with `Recycler::Circular<Buffer>`. It behave like a `std::unique_ptr<T[]>`. 
+
+To resize the buffer use `Buffer::resize(size_t)`. Memory will be reallocated only if the internal memory is smaller than the new size. Note than when resizing, data will be lost. No internal copy happened.
+
+```cpp
+#include <Recycler/Buffer.hpp>
+int main()
+{
+  Recycler::Buffer<std::uint8_t> buffer(1024);
+  // Memory is reallocated. Data is lost.
+  buffer.resize(4096);
+  // No allocation happened. Data is lost.
+  buffer.resize(2048);
+  // Memory is reallocated to 2048. Data is lost.
+  buffer.release();
+    
+  // Offset access
+  buffer[0] = 10;
+    
+  // Range loop
+  for(auto& it : buffer)
+    it = 45;
+    
+  // Auto cast
+  std::memset(buffer, 45, 2048);
+}
+```
+
+
+
 ## Build
 
 Simply clone then run cmake.
 
 ```
-git clone https://github.com/OlivierLdff/SharedCache.git
-cd SharedCache && mkdir build && cd build
+git clone https://github.com/OlivierLdff/Recycler.git
+cd Recycler && mkdir build && cd build
 cmake ..
 cmake --build . --config Release
 ```
@@ -188,23 +165,21 @@ ctest -C Release
 
 ### CMake Parameters
 
-- **SHAREDCACHE_TARGET** : Library target name. *Default : "SharedCache"*
-- **SHAREDCACHE_PROJECT** : Project name. *Default : "SharedCache"*
-- **SHAREDCACHE_USE_NAMESPACE** : Should the library be compiled with a namespace. *Default: ON*.
-- **SHAREDCACHE_NAMESPACE** : Namespace of the library is SHAREDCACHE_USE_NAMESPACE is ON. *Default : SharedCache.*
-- **SHAREDCACHE_BUILD_TEST** : Build SharedCache Test executable [ON OFF]. *Default: OFF*.
+- **RECYCLER_TARGET** : Library target name. *Default : "Recycler"*
+- **RECYCLER_PROJECT** : Project name. *Default : "Recycler"*
+- **RECYCLER_BUILD_TEST** : Build Recycler Test executable [ON OFF]. *Default: OFF*.
 
 ### CMake Integration
 
-The CMake script give you a target SharedCache that is an `INTERFACE`. Simply use CMake FetchContent function.
+The CMake script give you a target Recycler that is an `INTERFACE`. Simply use CMake FetchContent function.
 
 ```cmake
 include(FetchContent)
 FetchContent_Declare(
-    SharedCache
-    GIT_REPOSITORY https://github.com/OlivierLdff/SharedCache.git
+    Recycler
+    GIT_REPOSITORY https://github.com/OlivierLdff/Recycler.git
     GIT_TAG        master
 )
-FetchContent_MakeAvailable(SharedCache)
-target_link_libraries(YourTarget SharedCache)
+FetchContent_MakeAvailable(Recycler)
+target_link_libraries(YourTarget Recycler)
 ```
