@@ -28,7 +28,7 @@ namespace Recycler {
  * @tparam     T     Class of the object in the cache
  * @tparam     MAX   Size of the circular buffer
  */
-template<class T, std::size_t MAX>
+template<class T, std::size_t MAX = 16>
 class Circular
 {
     // ──────── TYPE ────────────
