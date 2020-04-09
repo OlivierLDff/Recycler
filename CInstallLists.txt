@@ -25,8 +25,8 @@ include(CMakePackageConfigHelpers)
 # Configure '<PROJECT-NAME>ConfigVersion.cmake'
 # Note: PROJECT_VERSION is used as a VERSION
 write_basic_package_version_file(
-    "${version_config}" COMPATIBILITY SameMajorVersion
-)
+  "${version_config}" COMPATIBILITY SameMajorVersion
+  )
 
 # Configure '<PROJECT-NAME>Config.cmake'
 # Use variables:
@@ -34,10 +34,10 @@ write_basic_package_version_file(
 #   * PROJECT_NAME
 MESSAGE(STATUS "Configure Config.cmake.in file located in ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in"
-    "${project_config}"
-    INSTALL_DESTINATION "${config_install_dir}"
-)
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in"
+  "${project_config}"
+  INSTALL_DESTINATION "${config_install_dir}"
+  )
 
 # Targets:
 #   * <prefix>/lib/libbar.a
@@ -45,43 +45,43 @@ configure_package_config_file(
 #   * header location after install: <prefix>/include/foo/Bar.hpp
 #   * headers can be included by C++ code `#include <foo/Bar.hpp>`
 install(
-    TARGETS ${RECYCLER_TARGET}
-    EXPORT "${targets_export_name}"
-    LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib"
-    RUNTIME DESTINATION "bin"
-    INCLUDES DESTINATION "${include_install_dir}"
-)
+  TARGETS ${RECYCLER_TARGET}
+  EXPORT "${targets_export_name}"
+  LIBRARY DESTINATION "lib"
+  ARCHIVE DESTINATION "lib"
+  RUNTIME DESTINATION "bin"
+  INCLUDES DESTINATION "${include_install_dir}"
+  )
 
 #install(TARGETS libsodium DESTINATION ".")
 
 add_custom_command(
-        TARGET ${RECYCLER_TARGET} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/include/Recycler.hpp
-                ${CMAKE_CURRENT_BINARY_DIR}/include/${RECYCLER_INSTALL_PREFIX}/Recycler.hpp)
+  TARGET ${RECYCLER_TARGET} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/include/Recycler.hpp
+  ${CMAKE_CURRENT_BINARY_DIR}/include/${RECYCLER_INSTALL_PREFIX}/Recycler.hpp)
 
 # Headers:
 #   * Source/foo/Bar.hpp -> <prefix>/include/foo/Bar.hpp
 #   * Source/foo/Baz.hpp -> <prefix>/include/foo/Baz.hpp
 install(
-    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/${RECYCLER_INSTALL_PREFIX}"
-    DESTINATION "${include_install_dir}"
-    FILES_MATCHING PATTERN "*.h"
-)
+  DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/${RECYCLER_INSTALL_PREFIX}"
+  DESTINATION "${include_install_dir}"
+  FILES_MATCHING PATTERN "*.h"
+  )
 
 # Config
 #   * <prefix>/lib/cmake/Foo/FooConfig.cmake
 #   * <prefix>/lib/cmake/Foo/FooConfigVersion.cmake
 install(
-    FILES "${project_config}" "${version_config}"
-    DESTINATION "${config_install_dir}"
-)
+  FILES "${project_config}" "${version_config}"
+  DESTINATION "${config_install_dir}"
+  )
 
 # Config
 #   * <prefix>/lib/cmake/Foo/FooTargets.cmake
 install(
-    EXPORT "${targets_export_name}"
-    NAMESPACE "${namespace}"
-    DESTINATION "${config_install_dir}"
-)
+  EXPORT "${targets_export_name}"
+  NAMESPACE "${namespace}"
+  DESTINATION "${config_install_dir}"
+  )

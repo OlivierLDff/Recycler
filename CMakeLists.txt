@@ -37,15 +37,15 @@ set(RECYCLER_VERSION_MAJOR 1)
 set(RECYCLER_VERSION_MINOR 1)
 set(RECYCLER_VERSION_PATCH 0)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-    EXECUTE_PROCESS(
-        COMMAND git describe --always
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        OUTPUT_VARIABLE RECYCLER_VERSION_TAG
-        OUTPUT_STRIP_TRAILING_WHITESPACE
+  EXECUTE_PROCESS(
+    COMMAND git describe --always
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE RECYCLER_VERSION_TAG
+    OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif()
 if(NOT RECYCLER_VERSION_TAG)
-    set(RECYCLER_VERSION_TAG 00000000)
+  set(RECYCLER_VERSION_TAG 00000000)
 endif()
 set(RECYCLER_VERSION_TAG_HEX 0x${RECYCLER_VERSION_TAG})
 set(RECYCLER_VERSION ${RECYCLER_VERSION_MAJOR}.${RECYCLER_VERSION_MINOR}.${RECYCLER_VERSION_PATCH} CACHE STRING "" FORCE)
@@ -85,13 +85,13 @@ message(STATUS "RECYCLER_FOLDER_PREFIX      : " ${RECYCLER_FOLDER_PREFIX})
 # Tests
 message(STATUS "RECYCLER_ENABLE_TESTS       : " ${RECYCLER_ENABLE_TESTS})
 if(RECYCLER_ENABLE_TESTS)
-message(STATUS "RECYCLER_TESTS_PREFIX       : " ${RECYCLER_TESTS_PREFIX})
+  message(STATUS "RECYCLER_TESTS_PREFIX       : " ${RECYCLER_TESTS_PREFIX})
 endif(RECYCLER_ENABLE_TESTS)
 
 # Install
 message(STATUS "RECYCLER_ENABLE_INSTALL     : " ${RECYCLER_ENABLE_INSTALL})
 if(RECYCLER_ENABLE_INSTALL)
-message(STATUS "RECYCLER_INSTALL_PREFIX     : " ${RECYCLER_INSTALL_PREFIX})
+  message(STATUS "RECYCLER_INSTALL_PREFIX     : " ${RECYCLER_INSTALL_PREFIX})
 endif(RECYCLER_ENABLE_INSTALL)
 
 message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
@@ -104,10 +104,10 @@ set(RECYCLER_INCS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(RECYCLER_PRIV_INCS_DIR ${RECYCLER_INCS_DIR}/Recycler)
 
 set(RECYCLER_SRCS
-    ${RECYCLER_PRIV_INCS_DIR}/Recycler.hpp
-    ${RECYCLER_PRIV_INCS_DIR}/Circular.hpp
-    ${RECYCLER_PRIV_INCS_DIR}/Buffer.hpp
-    )
+  ${RECYCLER_PRIV_INCS_DIR}/Recycler.hpp
+  ${RECYCLER_PRIV_INCS_DIR}/Circular.hpp
+  ${RECYCLER_PRIV_INCS_DIR}/Buffer.hpp
+  )
 source_group("Recycler" FILES ${RECYCLER_SRCS})
 
 # ┌──────────────────────────────────────────────────────────────────┐
@@ -133,7 +133,7 @@ target_compile_definitions(${RECYCLER_TARGET} INTERFACE -DRECYCLER_VERSION_TAG_H
 # └──────────────────────────────────────────────────────────────────┘
 
 if(RECYCLER_ENABLE_TESTS)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/CTestLists.txt)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/CTestLists.txt)
 endif()
 
 # ┌──────────────────────────────────────────────────────────────────┐
@@ -141,5 +141,5 @@ endif()
 # └──────────────────────────────────────────────────────────────────┘
 
 if(RECYCLER_ENABLE_INSTALL)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/CInstallLists.txt)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/CInstallLists.txt)
 endif()
