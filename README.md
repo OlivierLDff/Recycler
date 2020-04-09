@@ -6,7 +6,7 @@ This C++14 library provide classes that let you recycle allocated memory block. 
 
 ### Recycler::Circular
 
-The `Recycler::Circular<T>::make(...)` behave like `std::make_shared<T>(...)` except it will recycle previously allocated T if not in use anymore. 
+The `Recycler::Circular<T>::make(...)` behave like `std::make_shared<T>(...)` except it will recycle previously allocated T if not in use anymore.
 
 This library leverage the power of `std::shared_ptr` and heavily use the thread safe `use_count()` field. When an object created with `Recycler::Circular` goes out from user scope, it's automatically reused.
 
@@ -114,7 +114,7 @@ int main()
 
 ### Buffer
 
-The `Recycler::Buffer` is fully ready to be used with `Recycler::Circular<Buffer>`. It behave like a `std::unique_ptr<T[]>`. 
+The `Recycler::Buffer` is fully ready to be used with `Recycler::Circular<Buffer>`. It behave like a `std::unique_ptr<T[]>`.
 
 To resize the buffer use `Buffer::resize(size_t)`. Memory will be reallocated only if the internal memory is smaller than the new size. Note than when resizing, data will be lost. No internal copy happened.
 
@@ -123,25 +123,33 @@ To resize the buffer use `Buffer::resize(size_t)`. Memory will be reallocated on
 int main()
 {
   Recycler::Buffer<std::uint8_t> buffer(1024);
+
   // Memory is reallocated. Data is lost.
   buffer.resize(4096);
+
   // No allocation happened. Data is lost.
   buffer.resize(2048);
+
   // Memory is reallocated to 2048. Data is lost.
   buffer.release();
-    
+
   // Offset access
   buffer[0] = 10;
-    
+
   // Range loop
   for(auto& it : buffer)
     it = 45;
-    
+
   // Auto cast
   std::memset(buffer, 45, 2048);
+
+  // Buffer can also be initilized from std::initializer_lsit
+  buffer = {1, 2, 3};
+
+  // Or reset
+  buffer.reset({1, 2, 3, 4});
 }
 ```
-
 
 
 ## Build
