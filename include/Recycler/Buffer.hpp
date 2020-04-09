@@ -95,6 +95,16 @@ public:
         return _length;
     }
 
+    std::size_t size() const
+    {
+        return length();
+    }
+
+    bool empty() const
+    {
+        return length() == 0;
+    }
+
     std::size_t maxSize() const
     {
         return _maxSize;
