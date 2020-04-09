@@ -104,7 +104,7 @@ set(RECYCLER_INCS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(RECYCLER_PRIV_INCS_DIR ${RECYCLER_INCS_DIR}/Recycler)
 
 set(RECYCLER_SRCS
-    ${RECYCLER_INCS_DIR}/Recycler.hpp
+    ${RECYCLER_PRIV_INCS_DIR}/Recycler.hpp
     ${RECYCLER_PRIV_INCS_DIR}/Circular.hpp
     ${RECYCLER_PRIV_INCS_DIR}/Buffer.hpp
     )
