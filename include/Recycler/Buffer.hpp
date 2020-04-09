@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────────
 
 // C++ Headers
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 
@@ -25,14 +26,19 @@ class Buffer
     // ──────── ATTRIBUTES ────────────
 private:
     std::unique_ptr<T[]> _buffer;
-    size_t _length = 0;
-    size_t _maxSize = 0;
+    std::size_t _length = 0;
+    std::size_t _maxSize = 0;
 
     // ──────── CONSTRUCTOR ────────────
 public:
-    Buffer(size_t length = 0)
+    Buffer(std::size_t length = 0)
     {
         reset(length);
+    }
+
+    Buffer(std::initializer_list<T> l)
+    {
+        reset(l);
     }
 
     bool reset(size_t length)
@@ -59,6 +65,19 @@ public:
         return true;
     }
 
+    bool reset(std::initializer_list<T> l)
+    {
+        // Allocate required buffer
+        if (!reset(l.size()))
+            return false;
+
+        // Then copy initializer_list to out buffer
+        auto it = l.begin();
+        for (std::size_t i = 0; i < _length; ++i)
+            _buffer[i] = *it++;
+        return true;
+    }
+
     // ──────── API ────────────
 public:
     T* buffer()
@@ -71,12 +90,12 @@ public:
         return _buffer.get();
     }
 
-    size_t length() const
+    std::size_t length() const
     {
         return _length;
     }
 
-    size_t maxSize() const
+    std::size_t maxSize() const
     {
         return _maxSize;
     }
@@ -95,7 +114,7 @@ public:
         }
     }
 
-    bool resize(size_t length) { return reset(length); }
+    bool resize(std::size_t length) { return reset(length); }
 
     void clear()
     {
@@ -104,12 +123,12 @@ public:
 
     // ──────── ACCESSOR ────────────
 public:
-    T& operator[](const size_t offset)
+    T& operator[](const std::size_t offset)
     {
         return _buffer[offset];
     }
 
-    const T& operator[](const size_t offset) const
+    const T& operator[](const std::size_t offset) const
     {
         return _buffer[offset];
     }

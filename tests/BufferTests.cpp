@@ -1,7 +1,6 @@
-
 #include <Recycler/Buffer.hpp>
 #include <gtest/gtest.h>
-#include <cstring>
+#include <string>
 
 TEST(Buffer, resize)
 {
@@ -64,4 +63,31 @@ TEST(Buffer, memset_cpy)
     std::memcpy(dst, buffer, 2048);
     for (const auto& i : dst)
         ASSERT_EQ(i, 45);
+}
+
+TEST(Buffer, initializer_list)
+{
+    Recycler::Buffer<std::uint8_t> buffer = { 1, 2, 3 };
+    ASSERT_EQ(buffer.length(), 3);
+
+    for (std::size_t i = 0; i < buffer.length(); ++i)
+        ASSERT_EQ(buffer[i], i + 1);
+}
+
+TEST(Buffer, initializer_list2)
+{
+    Recycler::Buffer<std::uint64_t> buffer = { 1, 2, 3 };
+    ASSERT_EQ(buffer.length(), 3);
+
+    for (std::size_t i = 0; i < buffer.length(); ++i)
+        ASSERT_EQ(buffer[i], i + 1);
+}
+
+TEST(Buffer, initializer_list3)
+{
+    Recycler::Buffer<std::string> buffer = { "1", "2", "3" };
+    ASSERT_EQ(buffer.length(), 3);
+
+    for (std::size_t i = 0; i < buffer.length(); ++i)
+        ASSERT_EQ(buffer[i], std::to_string(i + 1));
 }
