@@ -58,7 +58,7 @@ set(RECYCLER_VERSION ${RECYCLER_VERSION_MAJOR}.${RECYCLER_VERSION_MINOR}.${RECYC
 set(RECYCLER_FOLDER_PREFIX ${RECYCLER_PROJECT} CACHE STRING "Prefix folder for all Recycler generated targets in generated project (only decorative)")
 
 # Tests
-set(RECYCLER_ENABLE_TESTS ON CACHE BOOL "Create or not a target for test (compatible with CTests)")
+set(RECYCLER_ENABLE_TESTS OFF CACHE BOOL "Create or not a target for test (compatible with CTests)")
 set(RECYCLER_TESTS_PREFIX ${RECYCLER_PROJECT} CACHE STRING "Prefix for all Recycler tests")
 
 # Install
