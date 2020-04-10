@@ -1,6 +1,7 @@
 #include <Recycler/Buffer.hpp>
 #include <gtest/gtest.h>
 #include <string>
+#include <cstring>
 
 TEST(Buffer, resize)
 {
