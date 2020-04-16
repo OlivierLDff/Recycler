@@ -133,7 +133,8 @@ target_compile_definitions(${RECYCLER_TARGET} INTERFACE -DRECYCLER_VERSION_TAG_H
 # └──────────────────────────────────────────────────────────────────┘
 
 if(RECYCLER_ENABLE_TESTS)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/CTestLists.txt)
+  enable_testing()
+  add_subdirectory(tests)
 endif()
 
 # ┌──────────────────────────────────────────────────────────────────┐

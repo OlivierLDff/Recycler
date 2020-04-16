@@ -1,0 +1,44 @@
+#
+#   Recycler CTest script
+#
+#   Copyright Olivier Le Doeuff 2019
+#
+
+include(FetchContent)
+
+# googletest
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY ${GTEST_REPOSITORY}
+  GIT_TAG        ${GTEST_TAG}
+  )
+
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(FETCHCONTENT_QUIET ON)
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+set_target_properties(gtest gtest_main gmock gmock_main
+  PROPERTIES FOLDER Dependencies/gtest)
+
+set(RECYCLER_TESTS ${RECYCLER_TARGET}_Tests)
+
+add_executable(${RECYCLER_TESTS} "${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/CircularTests.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/BufferTests.cpp")
+add_executable(${RECYCLER_TARGET}_CircularBenchmark             "${CMAKE_CURRENT_SOURCE_DIR}/CircularBenchmark.cpp")
+
+target_link_libraries(${RECYCLER_TESTS}                         ${RECYCLER_TARGET} gtest)
+target_link_libraries(${RECYCLER_TARGET}_CircularBenchmark      ${RECYCLER_TARGET})
+
+target_include_directories(${RECYCLER_TESTS}                    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(${RECYCLER_TARGET}_CircularBenchmark PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+if(RECYCLER_FOLDER_PREFIX)
+  set_target_properties(${RECYCLER_TESTS}                       PROPERTIES FOLDER ${RECYCLER_FOLDER_PREFIX}/Tests)
+  set_target_properties(${RECYCLER_TARGET}_CircularBenchmark    PROPERTIES FOLDER ${RECYCLER_FOLDER_PREFIX}/Tests)
+endif()
+
+message(STATUS "Add Test: ${RECYCLER_TESTS}")
+add_test(NAME ${RECYCLER_TESTS} COMMAND ${RECYCLER_TESTS})
