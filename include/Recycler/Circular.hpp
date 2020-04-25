@@ -40,7 +40,7 @@ public:
     /**
      * @brief Allocate `_cache` to size MAX. It can be resized later with `resize()`
      */
-    Circular() : _cache(std::make_unique<SharedObject[]>(MAX)) { }
+    Circular() : _cache(std::make_unique<SharedObject[]>(MAX)) {}
 
     // ──────── ATTRIBUTES ────────────
 protected:
@@ -77,7 +77,7 @@ public:
         {
             // Try to recycle first object
             const auto& first = _cache[0];
-            if (first && first.use_count() == 1)
+            if(first && first.use_count() == 1)
             {
                 _idx = 0;
                 first->reset(std::forward<Types>(args)...);
@@ -87,8 +87,8 @@ public:
             // Try to recycle next object
             if(_idx + 1 < _size)
             {
-                const auto& next = _cache[_idx+1];
-                if (next && next.use_count() == 1)
+                const auto& next = _cache[_idx + 1];
+                if(next && next.use_count() == 1)
                 {
                     ++_idx;
                     next->reset(std::forward<Types>(args)...);
@@ -102,13 +102,13 @@ public:
         const auto object = std::make_shared<T>(std::forward<Types>(args)...);
 
         // Cache is growing
-        if (_size != _maxSize)
+        if(_size != _maxSize)
             ++_size;
 
         ++_idx;
 
         // Handle circular loop
-        if (_idx >= _size)
+        if(_idx >= _size)
             _idx = 0;
 
         // Create or override item at idx
@@ -116,6 +116,7 @@ public:
 
         return object;
     }
+
 public:
     /**
      * @brief      Number of objects in cache
@@ -142,7 +143,7 @@ public:
      */
     bool resize(const std::size_t maxSize)
     {
-        if (maxSize < 1)
+        if(maxSize < 1)
             return false;
 
         _cache = std::make_unique<SharedObject[]>(maxSize);
@@ -156,12 +157,13 @@ public:
      */
     void release()
     {
-        std::unique_ptr<SharedObject[]> cache = std::make_unique<SharedObject[]>(_maxSize);
+        std::unique_ptr<SharedObject[]> cache =
+            std::make_unique<SharedObject[]>(_maxSize);
         std::size_t size = 0;
 
         // Keep in cache all reusable items
         for(auto i = 0; i < _maxSize; ++i)
-            if (_cache[i] && _cache[i].use_count() == 1)
+            if(_cache[i] && _cache[i].use_count() == 1)
                 cache[size++] = _cache[i];
 
         // Clear our current cache
@@ -178,8 +180,7 @@ public:
      */
     void clear()
     {
-        for (std::size_t i = 0; i < _maxSize; ++i)
-            _cache[i] = nullptr;
+        for(std::size_t i = 0; i < _maxSize; ++i) _cache[i] = nullptr;
         _idx = 0;
         _size = 0;
     }
