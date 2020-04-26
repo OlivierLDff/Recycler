@@ -4,24 +4,24 @@ This C++14 library provide classes that let you recycle allocated memory block. 
 
 ## How to use
 
-### Recycler::Circular
+### recycler::Circular
 
-The `Recycler::Circular<T>::make(...)` behave like `std::make_shared<T>(...)` except it will recycle previously allocated T if not in use anymore.
+The `recycler::Circular<T>::make(...)` behave like `std::make_shared<T>(...)` except it will recycle previously allocated T if not in use anymore.
 
-This library leverage the power of `std::shared_ptr` and heavily use the thread safe `use_count()` field. When an object created with `Recycler::Circular` goes out from user scope, it's automatically reused.
+This library leverage the power of `std::shared_ptr` and heavily use the thread safe `use_count()` field. When an object created with `recycler::Circular` goes out from user scope, it's automatically reused.
 
 The `Circular` container especially shine when:
 
 * Items are expected to be released in the same order they got created.
 * Items are expected to always be released.
 
-If some item are kept by the user, then they will be removed from cache if cache grow more than it's size. It's also possible to explicitly release memory from the cache with `Recycler::Circular<T>::release()`.
+If some item are kept by the user, then they will be removed from cache if cache grow more than it's size. It's also possible to explicitly release memory from the cache with `recycler::Circular<T>::release()`.
 
-Max size of the cache can be set at object declaration, with templated arg `MAX`. Cache can be resized later to better suit needs with `Recycler::Circular<T>::resize(size_t)`.
+Max size of the cache can be set at object declaration, with templated arg `MAX`. Cache can be resized later to better suit needs with `recycler::Circular<T>::resize(size_t)`.
 
-All memory in cache can be cleared with `Recycler::Circular<T>::clear()`.
+All memory in cache can be cleared with `recycler::Circular<T>::clear()`.
 
-> `Recycler::Circular<T, 2>` can be used for a double non blocking buffer.
+> `recycler::Circular<T, 2>` can be used for a double non blocking buffer.
 
 #### Example
 
@@ -41,7 +41,7 @@ int main()
 {
   // 1) Declare the cache that contain std::shared_ptr<Foo>.
   // Max element in cache is 2
-  Recycler::Circular<Foo, 2> cache;
+  recycler::Circular<Foo, 2> cache;
 
   // 2) Take a reference, first element is returned
   // This will call the constructor
@@ -104,7 +104,7 @@ private:
 
 int main()
 {
-  Recycler::Circular<Foo<>, 2> cache;
+  recycler::Circular<Foo<>, 2> cache;
   // Call constructor
   cache.make(4, 9.8);
   // Call reset function
@@ -114,7 +114,7 @@ int main()
 
 ### Buffer
 
-The `Recycler::Buffer` is fully ready to be used with `Recycler::Circular<Buffer>`. It behave like a `std::unique_ptr<T[]>`.
+The `recycler::Buffer` is fully ready to be used with `recycler::Circular<Buffer>`. It behave like a `std::unique_ptr<T[]>`.
 
 To resize the buffer use `Buffer::resize(size_t)`. Memory will be reallocated only if the internal memory is smaller than the new size. Note than when resizing, data will be lost. No internal copy happened.
 
@@ -122,7 +122,7 @@ To resize the buffer use `Buffer::resize(size_t)`. Memory will be reallocated on
 #include <Recycler/Buffer.hpp>
 int main()
 {
-  Recycler::Buffer<std::uint8_t> buffer(1024);
+  recycler::Buffer<std::uint8_t> buffer(1024);
 
   // Memory is reallocated. Data is lost.
   buffer.resize(4096);

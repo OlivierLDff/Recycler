@@ -6,7 +6,7 @@
 #include <chrono>
 #include <iostream>
 
-using namespace Recycler;
+using namespace recycler;
 
 template <size_t SIZE>
 void benchmarkCircular()

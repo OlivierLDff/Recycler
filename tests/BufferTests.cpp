@@ -5,7 +5,7 @@
 
 TEST(Buffer, resize)
 {
-    Recycler::Buffer<std::uint8_t> buffer(2048);
+    recycler::Buffer<std::uint8_t> buffer(2048);
 
     EXPECT_EQ(buffer.length(), 2048);
     EXPECT_EQ(buffer.maxSize(), 2048);
@@ -29,7 +29,7 @@ TEST(Buffer, resize)
 
 TEST(Buffer, operator)
 {
-    Recycler::Buffer<std::uint8_t> buffer(2048);
+    recycler::Buffer<std::uint8_t> buffer(2048);
 
     buffer[1] = 10;
     EXPECT_EQ(buffer[1], 10);
@@ -38,7 +38,7 @@ TEST(Buffer, operator)
 
 TEST(Buffer, iterator)
 {
-    Recycler::Buffer<std::uint8_t> buffer(2048);
+    recycler::Buffer<std::uint8_t> buffer(2048);
 
     int c = 0;
     for(auto& i : buffer)
@@ -53,13 +53,13 @@ TEST(Buffer, iterator)
 
 TEST(Buffer, memset_cpy)
 {
-    Recycler::Buffer<std::uint8_t> buffer(2048);
+    recycler::Buffer<std::uint8_t> buffer(2048);
 
     std::memset(buffer, 45, 2048);
     for (const auto& i : buffer)
         ASSERT_EQ(i, 45);
 
-    Recycler::Buffer<std::uint8_t> dst(2048);
+    recycler::Buffer<std::uint8_t> dst(2048);
 
     std::memcpy(dst, buffer, 2048);
     for (const auto& i : dst)
@@ -68,7 +68,7 @@ TEST(Buffer, memset_cpy)
 
 TEST(Buffer, initializer_list)
 {
-    Recycler::Buffer<std::uint8_t> buffer = { 1, 2, 3 };
+    recycler::Buffer<std::uint8_t> buffer = { 1, 2, 3 };
     ASSERT_EQ(buffer.length(), 3);
 
     for (std::size_t i = 0; i < buffer.length(); ++i)
@@ -77,7 +77,7 @@ TEST(Buffer, initializer_list)
 
 TEST(Buffer, initializer_list2)
 {
-    Recycler::Buffer<std::uint64_t> buffer = { 1, 2, 3 };
+    recycler::Buffer<std::uint64_t> buffer = { 1, 2, 3 };
     ASSERT_EQ(buffer.length(), 3);
 
     for (std::size_t i = 0; i < buffer.length(); ++i)
@@ -86,7 +86,7 @@ TEST(Buffer, initializer_list2)
 
 TEST(Buffer, initializer_list3)
 {
-    Recycler::Buffer<std::string> buffer = { "1", "2", "3" };
+    recycler::Buffer<std::string> buffer = { "1", "2", "3" };
     ASSERT_EQ(buffer.length(), 3);
 
     for (std::size_t i = 0; i < buffer.length(); ++i)

@@ -5,7 +5,7 @@
 
 #include <random>
 
-using namespace Recycler;
+using namespace recycler;
 
 TEST(CircularCacheTests, basic)
 {
