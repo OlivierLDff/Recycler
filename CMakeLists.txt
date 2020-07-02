@@ -24,9 +24,6 @@
 
 cmake_minimum_required(VERSION 3.14.0 FATAL_ERROR)
 
-set(GTEST_REPOSITORY "https://github.com/google/googletest" CACHE STRING "Repository of googletest")
-set(GTEST_TAG "master" CACHE STRING "Git tag/branch of googletest")
-
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       PROJECT SETTINGS                           │
 # └──────────────────────────────────────────────────────────────────┘
@@ -133,6 +130,7 @@ target_compile_definitions(${RECYCLER_TARGET} INTERFACE -DRECYCLER_VERSION_TAG_H
 # └──────────────────────────────────────────────────────────────────┘
 
 if(RECYCLER_ENABLE_TESTS)
+  include(cmake/FetchGTest.cmake)
   enable_testing()
   add_subdirectory(tests)
 endif()
@@ -142,5 +140,5 @@ endif()
 # └──────────────────────────────────────────────────────────────────┘
 
 if(RECYCLER_ENABLE_INSTALL)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/CInstallLists.txt)
+  include(CInstallLists.txt)
 endif()

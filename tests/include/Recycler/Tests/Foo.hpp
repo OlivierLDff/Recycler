@@ -4,7 +4,7 @@
 #include <cstring>
 #include <cstdint>
 
-namespace Recycler {
+namespace recycler {
 
 template<size_t SIZE = 512>
 class Foo

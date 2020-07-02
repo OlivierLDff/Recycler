@@ -1,5 +1,7 @@
 # Recycler
 
+[![](https://github.com/OlivierLDff/Recycler/workflows/CI/badge.svg)](https://github.com/OlivierLDff/Recycler/actions?query=workflow%3ACI)
+
 This C++14 library provide classes that let you recycle allocated memory block. It's really convenient to use in a non blocking producer/consumer design pattern.
 
 ## How to use
