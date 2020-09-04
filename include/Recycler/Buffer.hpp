@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <cstring>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
@@ -35,27 +36,10 @@ public:
 
     Buffer(std::initializer_list<T> l) { reset(l); }
 
-    bool reset(size_t length)
+    bool reset(std::size_t length)
     {
-        if(length == 0)
-        {
-            _length = 0;
-            _maxSize = 0;
-            _buffer = nullptr;
-            return false;
-        }
-
-        if(!_buffer || _maxSize < length)
-        {
-            _buffer = std::make_unique<T[]>(length);
-            _length = length;
-            _maxSize = length;
-        }
-        else if(length != _length)
-        {
-            _length = length;
-        }
-
+        resize(length);
+        for(std::size_t i = 0; i < _length; ++i) { _buffer[i] = {}; }
         return true;
     }
 
@@ -67,7 +51,7 @@ public:
 
         // Then copy initializer_list to out buffer
         auto it = l.begin();
-        for(std::size_t i = 0; i < _length; ++i) _buffer[i] = *it++;
+        for(std::size_t i = 0; i < _length; ++i) { _buffer[i] = *it++; }
         return true;
     }
 
@@ -99,7 +83,29 @@ public:
         }
     }
 
-    bool resize(std::size_t length) { return reset(length); }
+    bool resize(std::size_t length)
+    {
+        if(length == 0)
+        {
+            _length = 0;
+            _maxSize = 0;
+            _buffer = nullptr;
+            return true;
+        }
+
+        if(!_buffer || _maxSize < length)
+        {
+            _buffer = std::make_unique<T[]>(length);
+            _length = length;
+            _maxSize = length;
+        }
+        else if(length != _length)
+        {
+            _length = length;
+        }
+
+        return true;
+    }
 
     void clear() { reset(0); }
 
