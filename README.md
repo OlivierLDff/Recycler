@@ -182,7 +182,7 @@ ctest -C Release
 
 - **RECYCLER_TARGET** : Library target name. *Default : "Recycler"*
 - **RECYCLER_PROJECT** : Project name. *Default : "Recycler"*
-- **RECYCLER_BUILD_TEST** : Build Recycler Test executable [ON OFF]. *Default: OFF*.
+- **RECYCLER_ENABLE_TESTS** : Build `Recycler_Tests` executable [ON OFF]. *Default: OFF*.
 
 ### CMake Integration
 
