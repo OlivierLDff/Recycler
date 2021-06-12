@@ -8,6 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macOS-latest, ubuntu-latest]
+        build_type: ['Release', 'Debug']
     steps:
       - uses: actions/checkout@v2
 
@@ -16,12 +17,13 @@ jobs:
       - name: Configure
         run: |
           mkdir -p build
-          cmake -DRECYCLER_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE="Release" -B build -S .
+          cmake -DRECYCLER_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE="${{ matrix.build_type }}" -B build -S .
 
       - name: Build Tests
         run: |
-          cmake --build build --target "Recycler_Tests" --config "Release" -j
-          cmake --build build --target "Recycler_CircularBenchmark" --config "Release" -j
+          cmake --build build --target "Recycler_Tests" --config "${{ matrix.build_type }}" -j
+          cmake --build build --target "Recycler_CircularBenchmark" --config "${{ matrix.build_type }}" -j
 
       - name: Run unit tests
-        run: cd build && ctest --build-config "Release" --progress --verbose
+        run: cd build && ctest --build-config "${{ matrix.build_type }}" --progress --verbose
+
