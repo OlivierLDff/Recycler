@@ -130,7 +130,12 @@ int main()
   buffer.resize(4096);
 
   // No allocation happened. Data is lost.
-  buffer.resize(2048);
+  buffer.reset(2048/*, true*/);
+
+  // No allocation happened. Data is not lost.
+  // Setting the second parameter `clearBuffer` to false can save some time if you don't care about having a clear buffer
+  // Especially when dealing with large buffer.
+  buffer.reset(1024, false);
 
   // Memory is reallocated to 2048. Data is lost.
   buffer.release();
