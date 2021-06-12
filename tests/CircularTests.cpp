@@ -39,7 +39,7 @@ TEST(CircularCacheTests, basic)
 
     SharedFoo c[5];
 
-    for (int i = 0; i < 24; ++i)
+    for(int i = 0; i < 24; ++i)
     {
         c[i % 5] = cache.make();
         ASSERT_EQ(c[i % 5].use_count(), 2);
@@ -53,7 +53,7 @@ TEST(CircularCacheTests, fuzz)
     std::random_device rd;
 
     SharedFoo c[3];
-    for (int i = 0; i < 1000; ++i)
+    for(int i = 0; i < 1000; ++i)
     {
         const auto rdmIdx = rd() % 2;
         c[rdmIdx] = cache.make();
@@ -67,10 +67,10 @@ TEST(CircularCacheTests, fuzz2)
 
     SharedFoo c[3];
     int ci = 0;
-    for (int i = 0; i < 20; ++i)
+    for(int i = 0; i < 20; ++i)
     {
         c[ci++] = cache.make();
-        if (ci == 3)
+        if(ci == 3)
             ci = 0;
 
         // Cache should never grow bigger than 4
@@ -84,14 +84,12 @@ TEST(CircularCacheTests, release)
 
     SharedFoo c[3];
     int ci = 0;
-    for (int i = 0; i < 3; ++i)
-        c[ci++] = cache.make();
+    for(int i = 0; i < 3; ++i) c[ci++] = cache.make();
     ASSERT_EQ(cache.size(), 3);
     cache.release();
     ASSERT_EQ(cache.size(), 0);
     ci = 0;
-    for (int i = 0; i < 3; ++i)
-        c[ci++] = cache.make();
+    for(int i = 0; i < 3; ++i) c[ci++] = cache.make();
     ASSERT_EQ(cache.size(), 3);
     cache.release();
     ASSERT_EQ(cache.size(), 0);

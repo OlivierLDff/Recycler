@@ -11,8 +11,7 @@ class Foo
 {
 public:
     Foo() = default;
-    void reset()
-    {
+    void reset() {
         //std::memset(dummyData, 0, SIZE);
     };
 
