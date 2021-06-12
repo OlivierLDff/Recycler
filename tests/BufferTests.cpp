@@ -1,4 +1,4 @@
-#include <Recycler/Buffer.hpp>
+﻿#include <Recycler/Buffer.hpp>
 #include <gtest/gtest.h>
 #include <string>
 #include <cstring>
@@ -48,6 +48,24 @@ TEST(Buffer, iterator)
     ASSERT_EQ(buffer[2], 3);
     ASSERT_EQ(buffer[254], 255);
     ASSERT_EQ(buffer[255], 0);
+}
+
+TEST(Buffer, reset_with_zero)
+{
+    recycler::Buffer<std::uint8_t> buffer(2048);
+    for(auto& i: buffer) { ASSERT_EQ(i, 0); }
+    std::uint8_t c = 0;
+    for(auto& i: buffer) { i = ++c; }
+
+    buffer.reset(1024);
+    for(auto& i: buffer) { ASSERT_EQ(i, 0); }
+
+    for(auto& i: buffer) { i = 1; }
+    buffer.reset(1024, false);
+    for(auto& i: buffer) { ASSERT_NE(i, 0); }
+
+    buffer.reset(1024, true);
+    for(auto& i: buffer) { ASSERT_EQ(i, 0); }
 }
 
 TEST(Buffer, memset_cpy)

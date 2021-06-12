@@ -32,14 +32,20 @@ private:
 
     // ──────── CONSTRUCTOR ────────────
 public:
-    Buffer(std::size_t length = 0) { reset(length); }
+    Buffer(std::size_t length = 0, bool clearBuffer = true)
+    {
+        reset(length, clearBuffer);
+    }
 
     Buffer(std::initializer_list<T> l) { reset(l); }
 
-    bool reset(std::size_t length)
+    bool reset(std::size_t length, bool clearBuffer = true)
     {
         resize(length);
-        for(std::size_t i = 0; i < _length; ++i) { _buffer[i] = {}; }
+        if(clearBuffer)
+        {
+            for(std::size_t i = 0; i < _length; ++i) { _buffer[i] = {}; }
+        }
         return true;
     }
 
