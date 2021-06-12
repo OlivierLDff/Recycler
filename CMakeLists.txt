@@ -28,7 +28,7 @@
 #   - RECYCLER_BUILD_SHARED : Build shared library [ON OFF]. Default: OFF.
 #   - RECYCLER_BUILD_STATIC : Build static library [ON OFF]. Default: ON.
 #
-#   - RECYCLER_BUILD_TEST : Build Recycler Test executable [ON OFF]. Default: OFF.
+#   - RECYCLER_ENABLE_TESTS : Build Recycler Test executable [ON OFF]. Default: OFF.
 #
 #   - GTEST_REPOSITORY : Repository of gtest, can be a local url [URL]. Default  https://github.com/google/googletest.git.
 #   - GTEST_TAG : Version of gtest [master release-1.8.0]. Default : release-1.8.0.
@@ -36,6 +36,7 @@
 ## CMAKE OUTPUT
 #
 #   - RECYCLER_TARGET : Output target to link to. Default: Recycler
+#   - RECYCLER_VERSION : Version of Recycler library
 #
 
 # ┌──────────────────────────────────────────────────────────────────┐
