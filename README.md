@@ -35,7 +35,7 @@ Here a basic example that allocate multiple instance of `Foo` and reuse them. A 
 class Foo
 {
 public:
-  Foo() = default;
+  Foo() {}
   void reset() { };
 };
 
