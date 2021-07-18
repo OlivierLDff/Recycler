@@ -45,6 +45,11 @@
 
 cmake_minimum_required(VERSION 3.14.0 FATAL_ERROR)
 
+set(RECYCLER_MAIN_PROJECT OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(RECYCLER_MAIN_PROJECT ON)
+endif()
+
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       PROJECT SETTINGS                           │
 # └──────────────────────────────────────────────────────────────────┘
@@ -86,8 +91,11 @@ set(RECYCLER_INSTALL_PREFIX ${RECYCLER_PROJECT} CACHE STRING "Prefix for all Rec
 # CREATE PROJECT
 
 project(${RECYCLER_PROJECT} VERSION ${RECYCLER_VERSION} LANGUAGES CXX)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 14)
+
+if(RECYCLER_MAIN_PROJECT)
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+endif()
 
 # LOG OPTIONS
 
