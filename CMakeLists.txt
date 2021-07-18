@@ -134,6 +134,7 @@ source_group("Recycler" FILES ${RECYCLER_SRCS})
 
 # Recycler Target
 add_library(${RECYCLER_TARGET} INTERFACE)
+add_library(${RECYCLER_TARGET}::${RECYCLER_TARGET} ALIAS ${RECYCLER_TARGET})
 target_sources(${RECYCLER_TARGET} INTERFACE "${RECYCLER_SRCS}")
 
 # Set include directory
