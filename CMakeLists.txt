@@ -87,6 +87,7 @@ set(RECYCLER_TESTS_PREFIX ${RECYCLER_PROJECT} CACHE STRING "Prefix for all Recyc
 # Install
 set(RECYCLER_ENABLE_INSTALL OFF CACHE BOOL "Create or not a target for install")
 set(RECYCLER_INSTALL_PREFIX ${RECYCLER_PROJECT} CACHE STRING "Prefix for all Recycler headers in the install folder")
+set(RECYCLER_VERBOSE ${RECYCLER_MAIN_PROJECT} CACHE BOOL "Create or not a target for install")
 
 # CREATE PROJECT
 
@@ -98,28 +99,30 @@ endif()
 
 # LOG OPTIONS
 
-message(STATUS "---------------- RECYCLER OPTIONS. ----------------")
+if(RECYCLER_VERBOSE)
+  message(STATUS "---------------- RECYCLER OPTIONS. ----------------")
 
-#General
-message(STATUS "RECYCLER_PROJECT            : " ${RECYCLER_PROJECT})
-message(STATUS "RECYCLER_TARGET             : " ${RECYCLER_TARGET})
-message(STATUS "RECYCLER_VERSION            : " ${RECYCLER_VERSION})
-message(STATUS "RECYCLER_VERSION_TAG        : " ${RECYCLER_VERSION_TAG})
-message(STATUS "RECYCLER_FOLDER_PREFIX      : " ${RECYCLER_FOLDER_PREFIX})
+  #General
+  message(STATUS "RECYCLER_PROJECT            : " ${RECYCLER_PROJECT})
+  message(STATUS "RECYCLER_TARGET             : " ${RECYCLER_TARGET})
+  message(STATUS "RECYCLER_VERSION            : " ${RECYCLER_VERSION})
+  message(STATUS "RECYCLER_VERSION_TAG        : " ${RECYCLER_VERSION_TAG})
+  message(STATUS "RECYCLER_FOLDER_PREFIX      : " ${RECYCLER_FOLDER_PREFIX})
 
-# Tests
-message(STATUS "RECYCLER_ENABLE_TESTS       : " ${RECYCLER_ENABLE_TESTS})
-if(RECYCLER_ENABLE_TESTS)
-  message(STATUS "RECYCLER_TESTS_PREFIX       : " ${RECYCLER_TESTS_PREFIX})
-endif(RECYCLER_ENABLE_TESTS)
+  # Tests
+  message(STATUS "RECYCLER_ENABLE_TESTS       : " ${RECYCLER_ENABLE_TESTS})
+  if(RECYCLER_ENABLE_TESTS)
+    message(STATUS "RECYCLER_TESTS_PREFIX       : " ${RECYCLER_TESTS_PREFIX})
+  endif(RECYCLER_ENABLE_TESTS)
 
-# Install
-message(STATUS "RECYCLER_ENABLE_INSTALL     : " ${RECYCLER_ENABLE_INSTALL})
-if(RECYCLER_ENABLE_INSTALL)
-  message(STATUS "RECYCLER_INSTALL_PREFIX     : " ${RECYCLER_INSTALL_PREFIX})
-endif(RECYCLER_ENABLE_INSTALL)
+  # Install
+  message(STATUS "RECYCLER_ENABLE_INSTALL     : " ${RECYCLER_ENABLE_INSTALL})
+  if(RECYCLER_ENABLE_INSTALL)
+    message(STATUS "RECYCLER_INSTALL_PREFIX     : " ${RECYCLER_INSTALL_PREFIX})
+  endif(RECYCLER_ENABLE_INSTALL)
 
-message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
+  message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
+endif()
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       SOURCES                                    │
