@@ -1,7 +1,7 @@
 include(FetchContent)
 
 set(GTEST_REPOSITORY "https://github.com/OlivierLDff/googletest.git" CACHE STRING "googletest repository url")
-set(GTEST_TAG "cmake-cpp11-feature" CACHE STRING "googletest git tag")
+set(GTEST_TAG "release-1.11.0" CACHE STRING "googletest git tag")
 
 FetchContent_Declare(
   googletest
